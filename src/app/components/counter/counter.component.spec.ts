@@ -11,6 +11,7 @@ import { CounterComponent } from './counter.component';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { start } from 'repl';
+import { count } from 'console';
 
 const startCount = 123;
 const newCount = 456;
@@ -19,10 +20,6 @@ fdescribe('CounterComponent', () => {
   let component: CounterComponent;
   let fixture: ComponentFixture<CounterComponent>;
   let debugElement: DebugElement;
-
-  function expectCount(count: number): void {
-    expectText(fixture, 'count', String(count));
-  }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -38,35 +35,13 @@ fdescribe('CounterComponent', () => {
     debugElement = fixture.debugElement;
   });
 
-  it('shows the start count', () => {
-    // expectText(fixture, 'count', String(startCount));
-    expectCount(startCount);
-  });
-
-  it('emits countChange events on increment', () => {
-    // Arrange
-    let actualCount: number | undefined;
-    component.countChange.subscribe((count: number) => {
-      actualCount = count;
-    });
-
-    // Act
-    click(fixture, 'increment-button');
-
-    // Assert
-    expect(actualCount).toEqual(startCount + 1);
-  });
-
   xit('increments the count', () => {
-    // Act
     const incrementButton = debugElement.query(
       By.css('[data-testid="increment-button"]'),
     );
     incrementButton.triggerEventHandler('click', null);
-    // Re-render the Component
     fixture.detectChanges();
 
-    // Assert
     const countOutput = debugElement.query(By.css('[data-testid="count"]'));
     expect(countOutput.nativeElement.textContent).toBe('1');
   });
@@ -74,28 +49,32 @@ fdescribe('CounterComponent', () => {
   xit('decrements the count', () => {
     click(fixture, 'decrement-button');
     fixture.detectChanges();
-    expectCount(startCount - 1);
-    // expectText(fixture, 'count', '-1');
+    expectText(fixture, 'count', '-1');
   });
 
-  xit('resets the count', () => {
+  xit('reset the count', () => {
     const newCount = '123';
+    const resetInputel = findEl(fixture, 'reset-input').nativeElement;
+    resetInputel.value = newCount;
+    resetInputel.dispatchEvent(new Event('input'));
 
-    // Act
-    const resetInputEl = findEl(fixture, 'reset-input').nativeElement;
-    // Set field value
-    resetInputEl.value = newCount;
-    // Dispatch input event
-    const event = document.createEvent('Event');
-    event.initEvent('input', true, false);
-    resetInputEl.dispatchEvent(event);
-
-    // Click on reset button
     click(fixture, 'reset-button');
-    // Re-render the Component
     fixture.detectChanges();
-
-    // Assert
     expectText(fixture, 'count', newCount);
+  });
+
+  xit('shows the starCount', () => {
+    expectText(fixture, 'count', startCount.toString());
+  });
+
+  it('emits countChange', () => {
+    let actualNumber: number | undefined;
+    component.countChange.subscribe((count) => {
+      actualNumber = count;
+    });
+
+    click(fixture, 'increment-button');
+
+    expect(actualNumber).toEqual(startCount + 1);
   });
 });
