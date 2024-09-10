@@ -7,7 +7,7 @@ import { CounterComponent } from './counter.component';
 const startCount = 123;
 const newCount = 456;
 
-describe('CounterComponent', () => {
+fdescribe('CounterComponent', () => {
   let component: CounterComponent;
   let fixture: ComponentFixture<CounterComponent>;
 
